@@ -1,0 +1,346 @@
+/* Chess Game Styles */
+
+.chess-game-container {
+  min-height: 100vh;
+  background: #f8fafc;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+
+
+.chess-game-layout {
+  display: flex;
+  gap: 2rem;
+  height: 100vh;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+
+.chess-board-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.game-logger-section {
+  width: 400px;
+  min-width: 400px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  background: #f8f9fa;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  margin-left: 1rem;
+  height: 100%;
+}
+
+.chess-board {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0;
+  border: 4px solid #5d4037;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  background: #5d4037;
+}
+
+.chess-square {
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chess-square.light {
+  background: linear-gradient(135deg, #f4d03f 0%, #f39c12 100%);
+  border: 1px solid #d68910;
+}
+
+.chess-square.dark {
+  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
+  border: 1px solid #5d4037;
+}
+
+.chess-square:hover {
+  transform: scale(1.05);
+  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.chess-square.selected {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.chess-square.valid-move {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.chess-square.valid-capture {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+}
+
+.chess-piece {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.piece-symbol {
+  font-size: 3.5rem;
+  font-weight: bold;
+  text-shadow: 
+    2px 2px 4px rgba(0, 0, 0, 0.5),
+    -1px -1px 2px rgba(255, 255, 255, 0.3);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.chess-piece:hover .piece-symbol {
+  transform: scale(1.1);
+}
+
+.valid-move-indicator {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(16, 185, 129, 0.8);
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.valid-capture-indicator {
+  position: absolute;
+  inset: 0;
+  border: 4px solid rgba(239, 68, 68, 0.8);
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+}
+
+.player-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0 1rem;
+}
+
+.player-label {
+  background: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  color: #1f2937;
+  font-weight: 600;
+  font-size: 1.1rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.logout-btn-small {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-small:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
+.game-logger {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border: none;
+  box-shadow: none;
+  color: #333;
+}
+
+.logger-content {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-right: 0.5rem;
+  padding-left: 1rem;
+}
+
+.logger-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.logger-content::-webkit-scrollbar-track {
+  background: #e9ecef;
+  border-radius: 3px;
+}
+
+.logger-content::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 3px;
+}
+
+.logger-content::-webkit-scrollbar-thumb:hover {
+  background: #6c757d;
+}
+
+.log-entry {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+  padding-left: 0;
+  border-bottom: 1px solid #e9ecef;
+  line-height: 1.4;
+}
+
+.log-entry:last-child {
+  border-bottom: none;
+}
+
+.log-timestamp {
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 0.8rem;
+  min-width: 80px;
+}
+
+.log-message {
+  word-break: break-words;
+  line-height: 1.4;
+  color: #333;
+}
+
+
+
+.game-status {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.game-status h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.status-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.status-value {
+  font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 1200px) {
+  .chess-game-layout {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .game-logger-section {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+    height: 400px;
+  }
+  
+  .chess-board-section {
+    max-width: 100%;
+  }
+  
+  .chess-square {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .chess-piece {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .chess-game-container {
+    padding: 0.5rem;
+  }
+  
+  .chess-square {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .chess-piece {
+    font-size: 2rem;
+  }
+  
+  .game-logger {
+    padding: 1rem;
+  }
+  
+  .logger-content {
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chess-square {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .chess-piece {
+    font-size: 1.5rem;
+  }
+  
+  .player-labels {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
