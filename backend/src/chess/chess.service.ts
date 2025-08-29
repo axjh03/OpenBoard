@@ -55,6 +55,19 @@ export class ChessService {
         this.board[toRow][toCol] = piece;
         this.board[fromRow][fromCol] = null;
         
+        // Check for pawn promotion
+        if (piece.type === 'pawn') {
+          const promotionRow = piece.color === 'white' ? 0 : 7;
+          if (toRow === promotionRow) {
+            // Auto-promote to queen (most common choice)
+            this.board[toRow][toCol] = { 
+              type: 'queen', 
+              color: piece.color, 
+              id: `Q1_${piece.color === 'white' ? 'W' : 'B'}` 
+            };
+          }
+        }
+        
         // Switch turns
         this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
         
@@ -83,7 +96,7 @@ export class ChessService {
     }
 
     const moves: { row: number; col: number }[] = [];
-    // Simple pawn moves for demonstration
+    
     if (piece.type === 'pawn') {
       const direction = piece.color === 'white' ? -1 : 1;
       const newRow = row + direction;
@@ -111,6 +124,122 @@ export class ChessService {
           }
         }
       }
+    } else if (piece.type === 'knight') {
+      // Knight moves: L-shaped pattern
+      const knightMoves = [
+        { row: -2, col: -1 }, { row: -2, col: 1 },
+        { row: -1, col: -2 }, { row: -1, col: 2 },
+        { row: 1, col: -2 }, { row: 1, col: 2 },
+        { row: 2, col: -1 }, { row: 2, col: 1 }
+      ];
+      
+      for (const move of knightMoves) {
+        const newRow = row + move.row;
+        const newCol = col + move.col;
+        
+        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece || targetPiece.color !== piece.color) {
+            moves.push({ row: newRow, col: newCol });
+          }
+        }
+      }
+    } else if (piece.type === 'bishop') {
+      // Bishop moves: diagonal
+      const directions = [
+        { row: -1, col: -1 }, { row: -1, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color !== piece.color) {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'rook') {
+      // Rook moves: horizontal and vertical
+      const directions = [
+        { row: -1, col: 0 }, { row: 1, col: 0 },
+        { row: 0, col: -1 }, { row: 0, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color !== piece.color) {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'queen') {
+      // Queen moves: combination of rook and bishop
+      const directions = [
+        { row: -1, col: 0 }, { row: 1, col: 0 },
+        { row: 0, col: -1 }, { row: 0, col: 1 },
+        { row: -1, col: -1 }, { row: -1, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color !== piece.color) {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'king') {
+      // King moves: one square in any direction
+      const directions = [
+        { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
+        { row: 0, col: -1 }, { row: 0, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        const newRow = row + dir.row;
+        const newCol = col + dir.col;
+        
+        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece || targetPiece.color !== piece.color) {
+            moves.push({ row: newRow, col: newCol });
+          }
+        }
+      }
     }
     
     return { moves };
@@ -132,6 +261,16 @@ export class ChessService {
             // Execute the move
             this.board[newRow][col] = piece;
             this.board[row][col] = null;
+            
+            // Check for pawn promotion
+            if (newRow === 7) {
+              this.board[newRow][col] = { 
+                type: 'queen', 
+                color: piece.color, 
+                id: `Q1_B` 
+              };
+            }
+            
             this.currentTurn = 'white';
             
             return {
@@ -146,6 +285,42 @@ export class ChessService {
     }
     
     return { success: false, message: 'No valid AI move found' };
+  }
+
+  async promotePawn(pieceId: string, promotionType: string) {
+    try {
+      const [row, col] = this.findPieceById(pieceId);
+      
+      if (row === -1 || col === -1) {
+        return { success: false, message: 'Piece not found' };
+      }
+
+      const piece = this.board[row][col];
+      if (!piece || piece.type !== 'pawn') {
+        return { success: false, message: 'Piece is not a pawn' };
+      }
+
+      // Check if pawn is on promotion rank
+      const promotionRow = piece.color === 'white' ? 0 : 7;
+      if (row !== promotionRow) {
+        return { success: false, message: 'Pawn is not on promotion rank' };
+      }
+
+      // Promote the pawn
+      this.board[row][col] = { 
+        type: promotionType as any, 
+        color: piece.color, 
+        id: `${promotionType.charAt(0)}1_${piece.color === 'white' ? 'W' : 'B'}` 
+      };
+
+      return {
+        success: true,
+        message: 'Pawn promoted successfully',
+        gameState: this.getGameState()
+      };
+    } catch (error) {
+      return { success: false, message: 'Promotion failed: ' + error.message };
+    }
   }
 
   async getGameStatus() {

@@ -12,6 +12,11 @@ export class MakeMoveDto {
   targetSquare: string;
 }
 
+export class PromotePawnDto {
+  pieceId: string;
+  promotionType: string;
+}
+
 @Controller('chess')
 export class ChessController {
   constructor(private readonly chessService: ChessService) {}
@@ -50,5 +55,11 @@ export class ChessController {
   @Get('status')
   async getGameStatus() {
     return this.chessService.getGameStatus();
+  }
+
+  @Post('promote')
+  @HttpCode(HttpStatus.OK)
+  async promotePawn(@Body() promotePawnDto: PromotePawnDto) {
+    return this.chessService.promotePawn(promotePawnDto.pieceId, promotePawnDto.promotionType);
   }
 }

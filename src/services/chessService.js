@@ -102,6 +102,32 @@ class ChessService {
     }
   }
 
+  // Promote pawn
+  async promotePawn(pieceId, promotionType) {
+    try {
+      const response = await fetch(`${this.backendUrl}/chess/promote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          pieceId,
+          promotionType
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to promote pawn');
+      }
+
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Error promoting pawn:', error);
+      throw error;
+    }
+  }
+
   // Get game status
   async getGameStatus() {
     try {

@@ -86,11 +86,6 @@ const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMov
 
       {/* Center - Chess Board */}
       <div className="chess-board-center">
-        {/* CPU Label */}
-        <div className="player-label-top">
-          <h2 className="player-title">CPU</h2>
-        </div>
-
         {/* Chess Board */}
         <div className="chess-board-grid">
           {board.map((row, rowIndex) =>
@@ -119,11 +114,6 @@ const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMov
               );
             })
           )}
-        </div>
-
-        {/* User Label */}
-        <div className="player-label-bottom">
-          <h2 className="player-title">User</h2>
         </div>
       </div>
 

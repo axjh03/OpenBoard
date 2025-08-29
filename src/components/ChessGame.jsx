@@ -50,22 +50,49 @@ const ChessGame = ({ onLogout, currentUser }) => {
   };
 
   const updateCapturedPieces = (oldBoard, newBoard) => {
-    const newCapturedPieces = { ...capturedPieces };
+    // Count pieces in old board
+    const oldPieceCounts = { white: {}, black: {} };
+    const newPieceCounts = { white: {}, black: {} };
     
+    // Count pieces in old board
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
-        const oldPiece = oldBoard[row]?.[col];
-        const newPiece = newBoard[row]?.[col];
+        const piece = oldBoard[row]?.[col];
+        if (piece && piece.type) {
+          const color = piece.color;
+          oldPieceCounts[color][piece.type] = (oldPieceCounts[color][piece.type] || 0) + 1;
+        }
+      }
+    }
+    
+    // Count pieces in new board
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const piece = newBoard[row]?.[col];
+        if (piece && piece.type) {
+          const color = piece.color;
+          newPieceCounts[color][piece.type] = (newPieceCounts[color][piece.type] || 0) + 1;
+        }
+      }
+    }
+    
+    // Find captured pieces by comparing counts
+    const newCapturedPieces = { white: [...capturedPieces.white], black: [...capturedPieces.black] };
+    
+    for (const color of ['white', 'black']) {
+      for (const pieceType of ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king']) {
+        const oldCount = oldPieceCounts[color][pieceType] || 0;
+        const newCount = newPieceCounts[color][pieceType] || 0;
         
-        // If there was a piece and now there isn't, it was captured
-        if (oldPiece && oldPiece.type && (!newPiece || !newPiece.type)) {
-          const capturedColor = oldPiece.color;
-          const capturedType = oldPiece.type;
-          
-          if (capturedColor === 'white') {
-            newCapturedPieces.white.push(capturedType);
-          } else {
-            newCapturedPieces.black.push(capturedType);
+        if (oldCount > newCount) {
+          // Pieces were captured
+          const capturedCount = oldCount - newCount;
+          for (let i = 0; i < capturedCount; i++) {
+            if (color === 'white') {
+              newCapturedPieces.white.push(pieceType);
+            } else {
+              newCapturedPieces.black.push(pieceType);
+            }
           }
         }
       }
@@ -171,19 +198,6 @@ const ChessGame = ({ onLogout, currentUser }) => {
     <div className="chess-game-layout">
       {/* Chess Board Section */}
       <div className="chess-board-section">
-        <div className="player-labels">
-          <div className="player-label">CPU (Black)</div>
-          <div className="player-label">
-            You (White)
-            <button 
-              onClick={onLogout}
-              className="logout-btn-small"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-        
         <ChessBoard 
           gameState={{ board }}
           selectedSquare={selectedSquare}
