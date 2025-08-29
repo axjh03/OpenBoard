@@ -52,6 +52,11 @@ export class ChessController {
     return this.chessService.getAIMove();
   }
 
+  @Get('ai-hint')
+  async getAIHint() {
+    return this.chessService.getAIHint();
+  }
+
   @Get('status')
   async getGameStatus() {
     return this.chessService.getGameStatus();
