@@ -28,7 +28,7 @@ const GameLogger = ({ logs = [] }) => {
   return (
     <div className="game-logger">
       <div className="logger-header">
-        <span className="logger-title">CHESS GAME LOG</span>
+        <span className="logger-title">GAME LOG</span>
       </div>
       <div className="logger-content" ref={loggerRef}>
         {logs.map((log, index) => (
