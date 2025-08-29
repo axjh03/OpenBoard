@@ -1,21 +1,38 @@
-/* Chess Game Styles */
+/* Chess Game Styles - Frosty Theme */
 
 .chess-game-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: linear-gradient(135deg, #0f1419 0%, #1a2332 25%, #2d3748 50%, #1a2332 75%, #0f1419 100%);
   padding: 0;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
+  position: relative;
+  overflow-x: hidden;
 }
 
-
+.chess-game-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 144, 156, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(96, 125, 139, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(158, 158, 158, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
 
 .chess-game-layout {
   display: flex;
-  gap: 1rem;
+  gap: 0;
   height: 100vh;
   width: 100%;
-  padding: 1rem;
+  padding: 0;
   box-sizing: border-box;
+  position: relative;
+  z-index: 1;
 }
 
 .chess-board-section {
@@ -23,22 +40,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 630px;
 }
 
 .game-logger-section {
   position: fixed;
-  top: 1rem;
-  right: 1rem;
-  width: 450px;
-  max-width: 660px;
+  top: 0;
+  right: 0;
+  width: 630px;
+  max-width: 630px;
   display: flex;
   flex-direction: column;
-  background: #f8f9fa;
-  border: 2px solid #dee2e6;
-  border-radius: 8px;
-  height: calc(100vh - 2rem);
+  background: rgba(15, 20, 25, 0.9);
+  border: none;
+  border-left: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0;
+  height: 100vh;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 
+    -8px 0 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+}
+
+.game-logger-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255, 255, 255, 0.02) 2px,
+      rgba(255, 255, 255, 0.02) 4px
+    );
+  border-radius: 8px;
+  pointer-events: none;
 }
 
 /* New Chess Board Layout */
@@ -59,8 +100,10 @@
 .captured-title {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .captured-pieces-list {
@@ -69,9 +112,11 @@
   gap: 0.25rem;
   min-height: 400px;
   width: 3rem;
-  background: rgba(107, 114, 128, 0.1);
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 0.5rem;
   padding: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .captured-piece-item {
@@ -99,29 +144,37 @@
 .player-title {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #111827;
+  color: #e2e8f0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .chess-board-grid {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 0;
-  border: 2px solid #e5e7eb;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 0.5rem;
   overflow: hidden;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  background: #f9fafb;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .chess-board {
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 0;
-  border: 4px solid #5d4037;
+  border: 4px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  background: #5d4037;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
 }
 
 .chess-square {
@@ -137,32 +190,34 @@
 }
 
 .chess-square.light {
-  background: #fef3c7;
-  border: 1px solid #f59e0b;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 248, 255, 0.8) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .chess-square.dark {
-  background: #92400e;
-  border: 1px solid #78350f;
+  background: linear-gradient(135deg, rgba(100, 149, 237, 0.8) 0%, rgba(70, 130, 180, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .chess-square:hover {
   transform: scale(1.05);
-  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.5);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.5);
+  filter: brightness(1.2);
 }
 
 .chess-square.selected {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(200, 230, 255, 0.4) 100%) !important;
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
+  filter: brightness(1.3);
 }
 
 .chess-square.valid-move {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  background: linear-gradient(135deg, rgba(144, 238, 144, 0.4) 0%, rgba(0, 255, 127, 0.5) 100%) !important;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
 }
 
 .chess-square.valid-capture {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  background: linear-gradient(135deg, rgba(255, 182, 193, 0.4) 0%, rgba(255, 105, 180, 0.5) 100%) !important;
   box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.8);
 }
 
@@ -181,29 +236,31 @@
   font-size: 2.5rem;
   font-weight: bold;
   text-shadow: 
-    2px 2px 4px rgba(0, 0, 0, 0.5),
-    -1px -1px 2px rgba(255, 255, 255, 0.3);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    2px 2px 4px rgba(0, 0, 0, 0.8),
+    -1px -1px 2px rgba(255, 255, 255, 0.5);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  transition: all 0.2s ease;
 }
 
 .chess-piece:hover .piece-symbol {
   transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.7));
 }
 
 .valid-move-indicator {
   position: absolute;
   width: 20px;
   height: 20px;
-  background: rgba(16, 185, 129, 0.8);
+  background: rgba(144, 238, 144, 0.8);
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .valid-capture-indicator {
   position: absolute;
   inset: 0;
-  border: 4px solid rgba(239, 68, 68, 0.8);
+  border: 4px solid rgba(255, 105, 180, 0.8);
   border-radius: 8px;
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.8);
 }
@@ -217,21 +274,24 @@
 }
 
 .player-label {
-  background: white;
+  background: rgba(255, 255, 255, 0.1);
   padding: 0.75rem 1.5rem;
   border-radius: 12px;
-  color: #1f2937;
+  color: #e2e8f0;
   font-weight: 600;
   font-size: 1.1rem;
-  border: 1px solid #e5e7eb;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   display: flex;
   align-items: center;
   gap: 1rem;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .logout-btn-small {
-  background: #ef4444;
+  background: rgba(239, 68, 68, 0.8);
   color: white;
   border: none;
   padding: 0.25rem 0.75rem;
@@ -240,18 +300,21 @@
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
 }
 
 .logout-btn-small:hover {
-  background: #dc2626;
+  background: rgba(220, 38, 38, 0.9);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
+/* Terminal-style Game Logger */
 .game-logger {
-  background: #f8f9fa;
+  background: rgba(0, 0, 0, 0.9);
   border-radius: 8px;
-  padding: 1rem;
-  font-family: 'Courier New', monospace;
+  padding: 0;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   font-size: 0.875rem;
   overflow: hidden;
   display: flex;
@@ -259,7 +322,45 @@
   height: 100%;
   border: none;
   box-shadow: none;
-  color: #333;
+  color: #00ff00;
+  position: relative;
+}
+
+.logger-header {
+  background: rgba(0, 255, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.8rem;
+}
+
+.logger-title {
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.game-logger::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 255, 0, 0.03) 2px,
+      rgba(0, 255, 0, 0.03) 4px
+    );
+  pointer-events: none;
+  border-radius: 8px;
 }
 
 .logger-content {
@@ -267,9 +368,11 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  padding-right: 0.5rem;
-  padding-left: 1rem;
+  gap: 0.5rem;
+  padding: 1rem;
+  padding-left: 2rem;
+  position: relative;
+  z-index: 1;
 }
 
 .logger-content::-webkit-scrollbar {
@@ -277,17 +380,17 @@
 }
 
 .logger-content::-webkit-scrollbar-track {
-  background: #e9ecef;
+  background: rgba(0, 255, 0, 0.1);
   border-radius: 3px;
 }
 
 .logger-content::-webkit-scrollbar-thumb {
-  background: #adb5bd;
+  background: rgba(0, 255, 0, 0.3);
   border-radius: 3px;
 }
 
 .logger-content::-webkit-scrollbar-thumb:hover {
-  background: #6c757d;
+  background: rgba(0, 255, 0, 0.5);
 }
 
 .log-entry {
@@ -295,8 +398,20 @@
   gap: 0.5rem;
   padding: 0.25rem 0;
   padding-left: 0;
-  border-bottom: 1px solid #e9ecef;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
   line-height: 1.4;
+  position: relative;
+  text-indent: -0.5rem;
+  margin-left: 0.5rem;
+}
+
+.log-entry::before {
+  content: '>';
+  color: #00ff00;
+  font-weight: bold;
+  position: absolute;
+  left: -1.5rem;
+  opacity: 0.7;
 }
 
 .log-entry:last-child {
@@ -304,19 +419,19 @@
 }
 
 .log-timestamp {
-  color: #6c757d;
+  color: #00ff00;
   font-weight: 600;
   font-size: 0.8rem;
   min-width: 80px;
+  opacity: 0.8;
 }
 
 .log-message {
   word-break: break-words;
   line-height: 1.4;
-  color: #333;
+  color: #00ff00;
+  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
 }
-
-
 
 .game-status {
   background: rgba(255, 255, 255, 0.1);
@@ -325,13 +440,15 @@
   padding: 1rem;
   margin-bottom: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
+  color: #e2e8f0;
 }
 
 .game-status h3 {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .status-item {
@@ -347,6 +464,7 @@
 
 .status-value {
   font-weight: 600;
+  color: #e2e8f0;
 }
 
 /* Responsive design */
@@ -357,14 +475,20 @@
   }
   
   .game-logger-section {
+    position: relative;
     width: 100%;
     min-width: 100%;
     max-width: 100%;
     height: 400px;
+    top: auto;
+    right: auto;
+    border-left: none;
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
   }
   
   .chess-board-section {
     max-width: 100%;
+    margin-right: 0;
   }
   
   .chess-square {
@@ -423,20 +547,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 2000;
+  backdrop-filter: blur(10px);
 }
 
 .promotion-modal {
-  background: white;
+  background: rgba(15, 20, 25, 0.95);
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   max-width: 500px;
   width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
 }
 
 .promotion-modal-header {
@@ -444,7 +573,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   padding-bottom: 1rem;
 }
 
@@ -452,7 +581,9 @@
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
-  color: #111827;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .promotion-modal-close {
@@ -460,20 +591,20 @@
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   padding: 0.25rem;
   border-radius: 4px;
   transition: all 0.2s ease;
 }
 
 .promotion-modal-close:hover {
-  background: #f3f4f6;
-  color: #374151;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
 }
 
 .promotion-modal-content p {
   margin: 0 0 1.5rem 0;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
 }
 
@@ -488,19 +619,20 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  background: white;
+  background: rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 100px;
+  backdrop-filter: blur(10px);
 }
 
 .promotion-piece-button:hover {
-  border-color: #3b82f6;
-  background: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .promotion-piece-button .piece-symbol {
@@ -511,7 +643,7 @@
 .promotion-piece-label {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #374151;
+  color: rgba(255, 255, 255, 0.8);
   text-transform: capitalize;
 }
 
@@ -527,17 +659,22 @@
   align-items: center;
   justify-content: center;
   z-index: 3000;
+  backdrop-filter: blur(10px);
 }
 
 .difficulty-modal {
-  background: white;
+  background: rgba(15, 20, 25, 0.95);
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   max-width: 600px;
   width: 90%;
   max-height: 80vh;
   overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
 }
 
 .difficulty-modal-header {
@@ -549,12 +686,14 @@
   margin: 0 0 0.5rem 0;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #111827;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
 .difficulty-modal-header p {
   margin: 0;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
 }
 
@@ -570,41 +709,47 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border: 2px solid #e5e7eb;
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
-  background: white;
+  background: rgba(255, 255, 255, 0.05);
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
+  backdrop-filter: blur(10px);
 }
 
 .difficulty-option:hover {
-  border-color: #3b82f6;
-  background: #f8fafc;
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.1);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .difficulty-info h3 {
   margin: 0 0 0.25rem 0;
   font-size: 1.25rem;
   font-weight: 600;
-  color: #111827;
+  color: #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .difficulty-info p {
   margin: 0;
-  color: #6b7280;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 0.875rem;
 }
 
 .level-badge {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-  color: white;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  color: #e2e8f0;
   padding: 0.5rem 1rem;
   border-radius: 20px;
   font-weight: 600;
   font-size: 0.875rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .difficulty-modal-footer {
@@ -612,19 +757,23 @@
 }
 
 .cancel-button {
-  background: #6b7280;
-  color: white;
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.75rem 2rem;
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .cancel-button:hover {
-  background: #4b5563;
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Timer Styles */
@@ -633,21 +782,26 @@
   top: 1rem;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #e5e7eb;
+  background: rgba(15, 20, 25, 0.9);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   padding: 1rem 1.5rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
   z-index: 100;
   display: flex;
   align-items: center;
   gap: 1rem;
+  backdrop-filter: blur(20px);
 }
 
 .timer-label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #374151;
+  color: rgba(255, 255, 255, 0.8);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .timer-display {
@@ -656,14 +810,19 @@
   font-family: 'Courier New', monospace;
   min-width: 60px;
   text-align: center;
+  color: #00ff00;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
 .timer-display.active {
   animation: pulse 1s infinite;
+  color: #ffff00;
+  text-shadow: 0 0 15px rgba(255, 255, 0, 0.7);
 }
 
 .timer-display.inactive {
   opacity: 0.7;
+  color: rgba(0, 255, 0, 0.7);
 }
 
 @keyframes pulse {
@@ -677,20 +836,23 @@
   position: fixed;
   top: 1rem;
   right: 1rem;
-  background: #3b82f6;
-  color: white;
-  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 100;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .restart-button:hover {
-  background: #2563eb;
+  background: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
