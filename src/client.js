@@ -1,7 +1,19 @@
 // Simple client functions that call your NestJS backend
-// Backend runs on localhost:3001
+// Auto-detect backend URL
 
-const API_BASE = 'http://localhost:3001/auth';
+const getBackendUrl = () => {
+  const isLocalhost = window.location.hostname === 'localhost' || 
+                     window.location.hostname === '127.0.0.1' ||
+                     window.location.hostname.includes('localhost');
+  
+  const backendUrl = isLocalhost 
+    ? 'http://localhost:3001'
+    : 'https://openboard-l6io.onrender.com';
+  
+  return `${backendUrl}/auth`;
+};
+
+const API_BASE = getBackendUrl();
 
 // Sign up function
 export const signUp = async (username, password) => {

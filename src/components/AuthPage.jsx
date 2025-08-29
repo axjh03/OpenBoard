@@ -39,8 +39,17 @@ const AuthPage = ({ onLogin }) => {
     setIsLoading(true);
     
     try {
+      // Auto-detect backend URL
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.hostname.includes('localhost');
+      
+      const backendUrl = isLocalhost 
+        ? 'http://localhost:3001'
+        : 'https://openboard-l6io.onrender.com';
+      
       // Call NestJS backend
-      const response = await fetch('http://localhost:3001/auth/signin', {
+      const response = await fetch(`${backendUrl}/auth/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -91,8 +100,17 @@ const AuthPage = ({ onLogin }) => {
     setIsLoading(true);
     
         try {
+      // Auto-detect backend URL
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                         window.location.hostname === '127.0.0.1' ||
+                         window.location.hostname.includes('localhost');
+      
+      const backendUrl = isLocalhost 
+        ? 'http://localhost:3001'
+        : 'https://openboard-l6io.onrender.com';
+      
       // Call NestJS backend
-      const response = await fetch('http://localhost:3001/auth/signup', {
+      const response = await fetch(`${backendUrl}/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

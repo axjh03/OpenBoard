@@ -63,17 +63,17 @@ const ChessGame = ({ onLogout, currentUser }) => {
       setBoard(chessService.convertBoardFormat(boardState.board));
       
       // Enhanced logging with difficulty info
-      addLog("Chess game initialized successfully!", "system");
-      addLog(`AI Difficulty: ${getDifficultyName(aiDifficulty)} (Depth ${aiDifficulty})`, "system");
-      addLog("Game rules: Standard chess rules apply", "system");
-      addLog("You are playing as White (bottom)", "system");
-      addLog("CPU is playing as Black (top)", "system");
-      addLog("White to move first", "system");
-      addLog("Tip: Click on pieces to see valid moves", "system");
+      addLog("Welcome to the chess battlefield! Where pawns have dreams and kings have nightmares.", "system");
+      addLog(`AI Difficulty: ${getDifficultyName(aiDifficulty)} (Depth ${aiDifficulty}) - because easy would be too embarrassing for both of us.`, "system");
+      addLog("Game rules: Standard chess rules apply (and yes, that includes the rule about not crying when you lose).", "system");
+      addLog("You're playing as White - the color of hope, dreams, and inevitable disappointment.", "system");
+      addLog("CPU is playing as Black - the color of darkness, despair, and calculated moves.", "system");
+      addLog("Timer: 2 minutes per move - because chess should be fast, like your ex leaving you.", "system");
+      addLog("Tip: Click on pieces to see valid moves (and pray they're good ones).", "system");
       setIsPlayerTurn(true);
       setTimerActive(true); // Start timer for first move
     } catch (error) {
-      addLog("Failed to initialize game", "system");
+      addLog("Failed to initialize game - even the jokes failed!", "system");
       console.error(error);
     }
   };
@@ -153,7 +153,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
           // Log the capture
           const capturer = color === 'white' ? 'CPU' : 'Player';
           const captured = color === 'white' ? 'your' : 'CPU\'s';
-          addLog(`💀 ${capturer} captured ${captured} ${pieceType}!`, "system");
+          addLog(`${capturer} captured ${captured} ${pieceType}! - Another piece bites the dust!`, "system");
         }
       }
     }
@@ -194,7 +194,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
         }, 1000);
       }
     } catch (error) {
-      addLog("Promotion failed", "system");
+      addLog("Promotion failed - even pawns can't catch a break!", "system");
       console.error(error);
     } finally {
       setPromotionModal({ isOpen: false, pieceId: null, position: null });
@@ -277,16 +277,16 @@ const ChessGame = ({ onLogout, currentUser }) => {
           setValidMoves(moves.moves || []);
           const squareNotation = chessService.convertToChessNotation(rowIndex, colIndex);
           const moveCount = moves.moves ? moves.moves.length : 0;
-          addLog(`🎯 Selected ${piece.type} at ${squareNotation} (${moveCount} valid moves)`, "player");
+          addLog(`Selected ${piece.type} at ${squareNotation} (${moveCount} valid moves) - now let's see if you can actually use it properly.`, "player");
           
           if (moveCount === 0) {
-            addLog("⚠️ This piece has no legal moves", "system");
+            addLog("This piece has no legal moves - just like your dating life.", "system");
           } else if (moveCount === 1) {
-            addLog("💡 Only one move available for this piece", "system");
+            addLog("Only one move available - when life gives you lemons, make lemonade (or resign).", "system");
           }
         } catch (error) {
           console.error('Error getting valid moves:', error);
-          addLog("❌ Error calculating moves", "system");
+          addLog(" Error calculating moves - even the computer is confused!", "system");
         }
       }
     } else {
@@ -323,19 +323,19 @@ const ChessGame = ({ onLogout, currentUser }) => {
               
               // Check for special moves
               if (pieceType === 'pawn' && Math.abs(selectedSquare.row - rowIndex) === 2) {
-                addLog("Pawn made a double move!", "system");
+                addLog("Pawn made a double move! - This pawn has ambitions!", "system");
               }
               
               // AI move after a short delay
               setTimeout(() => {
                 makeAIMove();
               }, 1000);
-            } else {
-              addLog(`Pawn reached promotion rank! Choose your promotion piece.`, "player");
-            }
+                          } else {
+                addLog(`Pawn reached promotion rank! - From peasant to royalty!`, "player");
+              }
           }
         } catch (error) {
-          addLog("Invalid move", "system");
+          addLog("Invalid move - even your mistakes are invalid!", "system");
           console.error(error);
         }
       } else {
@@ -345,21 +345,21 @@ const ChessGame = ({ onLogout, currentUser }) => {
           try {
             const moves = await chessService.getValidMoves(`${piece.type}_${rowIndex}_${colIndex}`);
             setValidMoves(moves.moves || []);
-            addLog(`Selected ${piece.type} at ${chessService.convertToChessNotation(rowIndex, colIndex)}`, "player");
+            addLog(`The ${piece.type} enters the stage at ${chessService.convertToChessNotation(rowIndex, colIndex)} - let's hope it's not a tragedy.`, "player");
           } catch (error) {
             console.error('Error getting valid moves:', error);
           }
         } else {
           setSelectedSquare(null);
           setValidMoves([]);
-          addLog(`Deselected piece`, "player");
+          addLog(`Deselected piece - commitment issues much?`, "player");
         }
       }
     }
   }, [selectedSquare, validMoves, isPlayerTurn, gameOver, board]);
 
   const makeAIMove = async () => {
-    addLog("AI is analyzing the position...", "cpu");
+    addLog("AI is analyzing the position... - Calculating your demise.", "cpu");
     
     try {
       const startTime = Date.now();
@@ -379,7 +379,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
       if (aiResult.success) {
         const fromSquare = aiResult.move.from;
         const toSquare = aiResult.move.to;
-        addLog(`AI moved: ${fromSquare} to ${toSquare} (thought for ${thinkTime}s)`, "cpu");
+        addLog(`AI moved: ${fromSquare} to ${toSquare} (thought for ${thinkTime}s) - The machine has spoken!`, "cpu");
         
         const oldBoard = [...board];
         const boardState = await chessService.getBoardState();
@@ -393,18 +393,18 @@ const ChessGame = ({ onLogout, currentUser }) => {
           addLog(moveAnalysis, "cpu");
         }
         
-        addLog(`Turn switched to Player`, "system");
+        addLog(`Turn switched to Player - your move, human!`, "system");
         setIsPlayerTurn(true);
         setTimer(120); // Reset timer
         setTimerActive(true); // Start timer for player
       }
     } catch (error) {
       if (error.message === 'AI move timeout') {
-        addLog("AI move timed out - making random move", "system");
+        addLog("AI move timed out - making random move - Even AI gets lazy sometimes!", "system");
         // Make a simple random move as fallback
         await makeRandomAIMove();
       } else {
-        addLog("AI move failed", "system");
+        addLog("AI move failed - even robots have bad days!", "system");
         console.error(error);
       }
     }
@@ -424,23 +424,23 @@ const ChessGame = ({ onLogout, currentUser }) => {
     
     // Check for captures
     if (oldBoard[toCoords.row]?.[toCoords.col] && oldBoard[toCoords.row][toCoords.col].color === 'white') {
-      return `💥 AI captured your ${oldBoard[toCoords.row][toCoords.col].type}!`;
+      return `AI captured your ${oldBoard[toCoords.row][toCoords.col].type}! - The machine shows no mercy!`;
     }
     
     // Check for pawn moves
     if (oldPiece.type === 'pawn') {
       if (Math.abs(fromCoords.row - toCoords.row) === 2) {
-        return "🚀 AI pawn made a double move!";
+        return "AI pawn made a double move! - Even pawns are faster than you!";
       }
       if (toCoords.row === 0) {
-        return "👑 AI pawn was promoted!";
+        return "AI pawn was promoted! - From silicon peasant to silicon royalty!";
       }
     }
     
     // Check for center control
     const centerSquares = ['d4', 'd5', 'e4', 'e5'];
     if (centerSquares.includes(toSquare)) {
-      return "🎯 AI is controlling the center!";
+      return "AI is controlling the center! - The machine knows chess theory!";
     }
     
     return null;
@@ -472,14 +472,14 @@ const ChessGame = ({ onLogout, currentUser }) => {
         
         setBoard(newBoard);
         updateCapturedPieces(oldBoard, newBoard);
-        addLog("AI made a random move", "cpu");
+        addLog("AI made a random move - even robots panic sometimes!", "cpu");
         addLog("Turn switched to Player", "system");
         setIsPlayerTurn(true);
         setTimer(120);
         setTimerActive(true);
       }
     } catch (error) {
-      addLog("Random AI move also failed", "system");
+      addLog("Random AI move also failed - the AI is having a meltdown!", "system");
       console.error(error);
     }
   };
