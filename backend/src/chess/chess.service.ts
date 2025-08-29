@@ -55,18 +55,8 @@ export class ChessService {
         this.board[toRow][toCol] = piece;
         this.board[fromRow][fromCol] = null;
         
-        // Check for pawn promotion
-        if (piece.type === 'pawn') {
-          const promotionRow = piece.color === 'white' ? 0 : 7;
-          if (toRow === promotionRow) {
-            // Auto-promote to queen (most common choice)
-            this.board[toRow][toCol] = { 
-              type: 'queen', 
-              color: piece.color, 
-              id: `Q1_${piece.color === 'white' ? 'W' : 'B'}` 
-            };
-          }
-        }
+        // Note: Pawn promotion will be handled by the frontend
+        // The pawn stays as a pawn until the player chooses promotion
         
         // Switch turns
         this.currentTurn = this.currentTurn === 'white' ? 'black' : 'white';
@@ -262,14 +252,8 @@ export class ChessService {
             this.board[newRow][col] = piece;
             this.board[row][col] = null;
             
-            // Check for pawn promotion
-            if (newRow === 7) {
-              this.board[newRow][col] = { 
-                type: 'queen', 
-                color: piece.color, 
-                id: `Q1_B` 
-              };
-            }
+            // Note: Pawn promotion will be handled by the frontend
+            // The pawn stays as a pawn until the player chooses promotion
             
             this.currentTurn = 'white';
             
