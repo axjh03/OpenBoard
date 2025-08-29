@@ -9,7 +9,7 @@ class ChessService {
     
     this.backendUrl = isLocalhost 
       ? 'http://localhost:3001'
-      : '/api'; // Use Netlify proxy to avoid CORS
+      : 'https://openboard-l6io.onrender.com';
     
     console.log(`Chess service initialized with backend URL: ${this.backendUrl}`);
     this.game = null;

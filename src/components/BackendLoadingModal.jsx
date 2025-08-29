@@ -19,7 +19,7 @@ const BackendLoadingModal = ({ onBackendConnected }) => {
         
         const backendUrl = isLocalhost 
           ? 'http://localhost:3001'
-          : '/api'; // Use Netlify proxy to avoid CORS
+          : 'https://openboard-l6io.onrender.com';
         
         const response = await fetch(`${backendUrl}/health`, {
           method: 'GET',
