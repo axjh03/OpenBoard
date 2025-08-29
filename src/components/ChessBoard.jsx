@@ -72,9 +72,9 @@ const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMov
 
   return (
     <div className="chess-board-container">
-      {/* Left Side - Captured by User */}
-      <div className="captured-pieces-side">
-        <h3 className="captured-title">Captured</h3>
+      {/* Top - Captured by CPU (Black pieces captured by White) */}
+      <div className="captured-pieces-side captured-pieces-top">
+        <h3 className="captured-title">Captured by White</h3>
         <div className="captured-pieces-list">
           {capturedPieces.black.map((piece, index) => (
             <div key={index} className="captured-piece-item">
@@ -117,9 +117,9 @@ const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMov
         </div>
       </div>
 
-      {/* Right Side - Captured by CPU */}
-      <div className="captured-pieces-side">
-        <h3 className="captured-title">Captured</h3>
+      {/* Bottom - Captured by User (White pieces captured by Black) */}
+      <div className="captured-pieces-side captured-pieces-bottom">
+        <h3 className="captured-title">Captured by Black</h3>
         <div className="captured-pieces-list">
           {capturedPieces.white.map((piece, index) => (
             <div key={index} className="captured-piece-item">

@@ -33,13 +33,58 @@
   box-sizing: border-box;
   position: relative;
   z-index: 1;
+  background: linear-gradient(135deg, #0f1419 0%, #1a2332 25%, #2d3748 50%, #1a2332 75%, #0f1419 100%);
+}
+
+.chess-game-layout::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 144, 156, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(96, 125, 139, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(158, 158, 158, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chess-game-layout > * {
+  position: relative;
+  z-index: 1;
 }
 
 .chess-board-section {
   flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  background: linear-gradient(135deg, #0f1419 0%, #1a2332 25%, #2d3748 50%, #1a2332 75%, #0f1419 100%);
+  position: relative;
+  padding-left: 16rem;
+  padding-right: 420px;
+}
+
+.chess-board-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 144, 156, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(96, 125, 139, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(158, 158, 158, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.chess-board-section > * {
+  position: relative;
+  z-index: 1;
 }
 
 .game-logger-section {
@@ -84,16 +129,33 @@
 /* New Chess Board Layout */
 .chess-board-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 1rem;
   height: 100%;
+  width: auto;
+  min-width: 400px;
+}
+
+.captured-pieces-top {
+  order: 1;
+  margin-bottom: 1rem;
+}
+
+.captured-pieces-bottom {
+  order: 3;
+  margin-top: 1rem;
 }
 
 .captured-pieces-side {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 350px;
 }
 
 .captured-title {
@@ -107,15 +169,17 @@
 
 .captured-pieces-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.25rem;
-  min-height: 400px;
-  width: 3rem;
+  min-height: 3rem;
+  width: 100%;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 0.5rem;
   padding: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
+  justify-content: center;
+  align-items: center;
 }
 
 .captured-piece-item {
@@ -124,20 +188,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .chess-board-center {
   display: flex;
   flex-direction: column;
   align-items: center;
+  order: 2;
+  flex: 0 0 auto;
 }
 
 .player-label-top {
   margin-bottom: 1rem;
+  order: 1;
 }
 
 .player-label-bottom {
   margin-top: 1rem;
+  order: 3;
 }
 
 .player-title {
@@ -160,6 +229,7 @@
     0 20px 40px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
+  margin: 0 auto;
 }
 
 .chess-board {
@@ -177,8 +247,8 @@
 }
 
 .chess-square {
-  width: 4rem;
-  height: 4rem;
+  width: 5rem;
+  height: 5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,13 +391,13 @@
   height: 100%;
   border: none;
   box-shadow: none;
-  color: #00ff00;
+  color: #007bff;
   position: relative;
 }
 
 .logger-header {
-  background: rgba(0, 255, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 255, 0, 0.3);
+  background: rgba(0, 123, 255, 0.1);
+  border-bottom: 1px solid rgba(0, 123, 255, 0.3);
   padding: 0.75rem 1rem;
   display: flex;
   justify-content: center;
@@ -339,8 +409,8 @@
 }
 
 .logger-title {
-  color: #00ff00;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  color: #007bff;
+  text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .game-logger::before {
@@ -355,8 +425,8 @@
       0deg,
       transparent,
       transparent 2px,
-      rgba(0, 255, 0, 0.03) 2px,
-      rgba(0, 255, 0, 0.03) 4px
+      rgba(0, 123, 255, 0.03) 2px,
+      rgba(0, 123, 255, 0.03) 4px
     );
   pointer-events: none;
   border-radius: 8px;
@@ -368,8 +438,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1rem;
-  padding-left: 2rem;
+  padding: 1rem 3rem 3rem 0;
   position: relative;
   z-index: 1;
 }
@@ -379,17 +448,17 @@
 }
 
 .logger-content::-webkit-scrollbar-track {
-  background: rgba(0, 255, 0, 0.1);
+  background: rgba(0, 123, 255, 0.1);
   border-radius: 3px;
 }
 
 .logger-content::-webkit-scrollbar-thumb {
-  background: rgba(0, 255, 0, 0.3);
+  background: rgba(0, 123, 255, 0.3);
   border-radius: 3px;
 }
 
 .logger-content::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 255, 0, 0.5);
+  background: rgba(0, 123, 255, 0.5);
 }
 
 .log-entry {
@@ -397,20 +466,10 @@
   gap: 0.5rem;
   padding: 0.25rem 0;
   padding-left: 0;
-  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+  border-bottom: 1px solid rgba(136, 190, 247, 0.2);
   line-height: 1.4;
   position: relative;
-  text-indent: -0.5rem;
-  margin-left: 0.5rem;
-}
-
-.log-entry::before {
-  content: '>';
-  color: #00ff00;
-  font-weight: bold;
-  position: absolute;
-  left: -1.5rem;
-  opacity: 0.7;
+  margin-left: 0;
 }
 
 .log-entry:last-child {
@@ -418,7 +477,7 @@
 }
 
 .log-timestamp {
-  color: #00ff00;
+  color: #ec3a1a;
   font-weight: 600;
   font-size: 0.8rem;
   min-width: 80px;
@@ -428,8 +487,8 @@
 .log-message {
   word-break: break-words;
   line-height: 1.4;
-  color: #00ff00;
-  text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+  color: #b3d6fc;
+  text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 .game-status {
@@ -488,6 +547,7 @@
   .chess-board-section {
     max-width: 100%;
     margin-right: 0;
+    padding-right: 17rem;
   }
   
   .chess-square {
@@ -809,13 +869,13 @@
   font-family: 'Courier New', monospace;
   min-width: 60px;
   text-align: center;
-  color: #00ff00;
+  color: #f30c0c;
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
 .timer-display.active {
   animation: pulse 1s infinite;
-  color: #ffff00;
+  color: #e71414;
   text-shadow: 0 0 15px rgba(255, 255, 0, 0.7);
 }
 
