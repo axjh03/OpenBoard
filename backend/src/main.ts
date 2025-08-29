@@ -9,14 +9,9 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // Enable CORS for frontend
+  // Enable CORS for frontend - allow all origins for now
   app.enableCors({
-    origin: [
-      'http://localhost:5173', 
-      'https://*.netlify.app', // Allow all Netlify domains
-      'https://*.netlify.com', // Allow all Netlify domains
-      'https://openboard-l6io.onrender.com' // Allow backend to frontend communication
-    ],
+    origin: true, // Allow all origins
     credentials: true,
   });
   
