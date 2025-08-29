@@ -11,35 +11,106 @@
 
 .chess-game-layout {
   display: flex;
-  gap: 2rem;
+  gap: 1rem;
   height: 100vh;
   width: 100%;
   padding: 1rem;
   box-sizing: border-box;
-  align-items: stretch;
 }
 
 .chess-board-section {
   flex: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 0;
 }
 
 .game-logger-section {
-  width: 400px;
-  min-width: 400px;
-  max-width: 400px;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  width: 550px;
+  max-width: 660px;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0;
   background: #f8f9fa;
   border: 2px solid #dee2e6;
   border-radius: 8px;
-  margin-left: 1rem;
+  height: calc(100vh - 2rem);
+  z-index: 1000;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* New Chess Board Layout */
+.chess-board-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
   height: 100%;
+}
+
+.captured-pieces-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.captured-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 0.5rem;
+}
+
+.captured-pieces-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 400px;
+  width: 3rem;
+  background: rgba(107, 114, 128, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+.captured-piece-item {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chess-board-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-label-top {
+  margin-bottom: 1rem;
+}
+
+.player-label-bottom {
+  margin-top: 1rem;
+}
+
+.player-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+.chess-board-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 0;
+  border: 2px solid #e5e7eb;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  background: #f9fafb;
 }
 
 .chess-board {
@@ -54,8 +125,8 @@
 }
 
 .chess-square {
-  width: 80px;
-  height: 80px;
+  width: 4rem;
+  height: 4rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -66,13 +137,13 @@
 }
 
 .chess-square.light {
-  background: linear-gradient(135deg, #f4d03f 0%, #f39c12 100%);
-  border: 1px solid #d68910;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
 }
 
 .chess-square.dark {
-  background: linear-gradient(135deg, #8b4513 0%, #654321 100%);
-  border: 1px solid #5d4037;
+  background: #92400e;
+  border: 1px solid #78350f;
 }
 
 .chess-square:hover {
@@ -107,7 +178,7 @@
 }
 
 .piece-symbol {
-  font-size: 3.5rem;
+  font-size: 2.5rem;
   font-weight: bold;
   text-shadow: 
     2px 2px 4px rgba(0, 0, 0, 0.5),

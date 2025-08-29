@@ -12,6 +12,10 @@ const ChessGame = ({ onLogout, currentUser }) => {
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState(null);
+  const [capturedPieces, setCapturedPieces] = useState({
+    white: [], // pieces captured by black (CPU)
+    black: []  // pieces captured by white (player)
+  });
 
   // Initialize game
   useEffect(() => {
@@ -45,6 +49,31 @@ const ChessGame = ({ onLogout, currentUser }) => {
     setLogs(prev => [...prev, newLog]);
   };
 
+  const updateCapturedPieces = (oldBoard, newBoard) => {
+    const newCapturedPieces = { ...capturedPieces };
+    
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const oldPiece = oldBoard[row]?.[col];
+        const newPiece = newBoard[row]?.[col];
+        
+        // If there was a piece and now there isn't, it was captured
+        if (oldPiece && oldPiece.type && (!newPiece || !newPiece.type)) {
+          const capturedColor = oldPiece.color;
+          const capturedType = oldPiece.type;
+          
+          if (capturedColor === 'white') {
+            newCapturedPieces.white.push(capturedType);
+          } else {
+            newCapturedPieces.black.push(capturedType);
+          }
+        }
+      }
+    }
+    
+    setCapturedPieces(newCapturedPieces);
+  };
+
   const handleSquareClick = useCallback(async (rowIndex, colIndex) => {
     if (gameOver || !isPlayerTurn) return;
 
@@ -76,8 +105,11 @@ const ChessGame = ({ onLogout, currentUser }) => {
           
           const result = await chessService.makeMove(pieceId, targetSquare);
           if (result.success) {
+            const oldBoard = [...board];
             const boardState = await chessService.getBoardState();
-            setBoard(chessService.convertBoardFormat(boardState.board));
+            const newBoard = chessService.convertBoardFormat(boardState.board);
+            setBoard(newBoard);
+            updateCapturedPieces(oldBoard, newBoard);
             setSelectedSquare(null);
             setValidMoves([]);
             setIsPlayerTurn(false);
@@ -120,8 +152,11 @@ const ChessGame = ({ onLogout, currentUser }) => {
       if (aiResult.success) {
         addLog(`CPU moved: ${aiResult.move.from} to ${aiResult.move.to}`, "cpu");
         
+        const oldBoard = [...board];
         const boardState = await chessService.getBoardState();
-        setBoard(chessService.convertBoardFormat(boardState.board));
+        const newBoard = chessService.convertBoardFormat(boardState.board);
+        setBoard(newBoard);
+        updateCapturedPieces(oldBoard, newBoard);
         
         addLog(`Turn switched to Player`, "system");
         setIsPlayerTurn(true);
@@ -154,6 +189,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
           selectedSquare={selectedSquare}
           onSquareClick={handleSquareClick}
           validMoves={validMoves}
+          capturedPieces={capturedPieces}
         />
       </div>
 

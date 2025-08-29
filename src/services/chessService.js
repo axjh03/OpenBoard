@@ -167,16 +167,13 @@ class ChessService {
     
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
-        const pieceId = backendBoard[row][col];
-        if (pieceId) {
-          // Extract piece information from the backend format
-          const piece = this.getPieceFromId(pieceId);
-          if (piece) {
-            frontendBoard[row][col] = {
-              type: piece.type,
-              color: piece.color
-            };
-          }
+        const piece = backendBoard[row][col];
+        if (piece) {
+          // Backend returns ChessPiece objects with type, color, and id properties
+          frontendBoard[row][col] = {
+            type: piece.type,
+            color: piece.color
+          };
         } else {
           frontendBoard[row][col] = { type: null, color: null };
         }
@@ -186,27 +183,25 @@ class ChessService {
     return frontendBoard;
   }
 
-  // Helper method to extract piece info from backend piece ID
+  // Helper method to extract piece info from backend piece ID (for move validation)
   getPieceFromId(pieceId) {
     if (!pieceId) return null;
     
-    // Backend format: "P1_W", "R1_B", etc.
-    const pieceType = pieceId.charAt(0);
-    const side = pieceId.includes('_W') ? 'white' : 'black';
+    // pieceId format: "pawn_6_0", "rook_7_0", etc.
+    const parts = pieceId.split('_');
+    if (parts.length >= 3) {
+      const type = parts[0];
+      const row = parseInt(parts[1]);
+      const col = parseInt(parts[2]);
+      
+      return {
+        type: type,
+        row: row,
+        col: col
+      };
+    }
     
-    const pieceMap = {
-      'P': 'pawn',
-      'N': 'knight', 
-      'B': 'bishop',
-      'R': 'rook',
-      'Q': 'queen',
-      'K': 'king'
-    };
-
-    return {
-      type: pieceMap[pieceType] || pieceType,
-      color: side
-    };
+    return null;
   }
 }
 

@@ -36,7 +36,7 @@ const initialBoard = [
   ],
 ];
 
-const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMoves = [] }) => {
+const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMoves = [], capturedPieces = { white: [], black: [] } }) => {
   const [board, setBoard] = useState(initialBoard);
 
   // Update board when game state changes
@@ -71,33 +71,73 @@ const ChessBoard = ({ onMove, gameState, selectedSquare, onSquareClick, validMov
   };
 
   return (
-    <div className="chess-board">
-      {board.map((row, rowIndex) =>
-        row.map((piece, colIndex) => {
-          const isLight = (rowIndex + colIndex) % 2 === 0;
-          const squareClass = `chess-square ${isLight ? 'light' : 'dark'}`;
-          
-          return (
-            <div
-              key={`${rowIndex}-${colIndex}`}
-              className={getSquareClass(rowIndex, colIndex, squareClass)}
-              onClick={() => handleSquareClick(rowIndex, colIndex)}
-            >
-              {piece.type && <ChessPiece type={piece.type} color={piece.color} />}
-              
-              {/* Show valid move indicator */}
-              {isValidMove(rowIndex, colIndex) && !piece.type && (
-                <div className="valid-move-indicator"></div>
-              )}
-              
-              {/* Show capture indicator */}
-              {isValidMove(rowIndex, colIndex) && piece.type && (
-                <div className="valid-capture-indicator"></div>
-              )}
+    <div className="chess-board-container">
+      {/* Left Side - Captured by User */}
+      <div className="captured-pieces-side">
+        <h3 className="captured-title">Captured</h3>
+        <div className="captured-pieces-list">
+          {capturedPieces.black.map((piece, index) => (
+            <div key={index} className="captured-piece-item">
+              <ChessPiece type={piece} color="black" />
             </div>
-          );
-        })
-      )}
+          ))}
+        </div>
+      </div>
+
+      {/* Center - Chess Board */}
+      <div className="chess-board-center">
+        {/* CPU Label */}
+        <div className="player-label-top">
+          <h2 className="player-title">CPU</h2>
+        </div>
+
+        {/* Chess Board */}
+        <div className="chess-board-grid">
+          {board.map((row, rowIndex) =>
+            row.map((piece, colIndex) => {
+              const isLight = (rowIndex + colIndex) % 2 === 0;
+              const squareClass = `chess-square ${isLight ? 'light' : 'dark'}`;
+              
+              return (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={getSquareClass(rowIndex, colIndex, squareClass)}
+                  onClick={() => handleSquareClick(rowIndex, colIndex)}
+                >
+                  {piece.type && <ChessPiece type={piece.type} color={piece.color} />}
+                  
+                  {/* Show valid move indicator */}
+                  {isValidMove(rowIndex, colIndex) && !piece.type && (
+                    <div className="valid-move-indicator"></div>
+                  )}
+                  
+                  {/* Show capture indicator */}
+                  {isValidMove(rowIndex, colIndex) && piece.type && (
+                    <div className="valid-capture-indicator"></div>
+                  )}
+                </div>
+              );
+            })
+          )}
+        </div>
+
+        {/* User Label */}
+        <div className="player-label-bottom">
+          <h2 className="player-title">User</h2>
+        </div>
+      </div>
+
+      {/* Right Side - Captured by CPU */}
+      <div className="captured-pieces-side">
+        <h3 className="captured-title">Captured</h3>
+        <div className="captured-pieces-list">
+          {capturedPieces.white.map((piece, index) => (
+            <div key={index} className="captured-piece-item">
+              <ChessPiece type={piece} color="white" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

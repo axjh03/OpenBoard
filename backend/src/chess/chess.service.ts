@@ -185,6 +185,23 @@ export class ChessService {
   }
 
   private findPieceById(pieceId: string): [number, number] {
+    // Handle frontend format: "pawn_6_0", "rook_7_0", etc.
+    const parts = pieceId.split('_');
+    if (parts.length >= 3) {
+      const type = parts[0];
+      const row = parseInt(parts[1]);
+      const col = parseInt(parts[2]);
+      
+      // Validate coordinates
+      if (row >= 0 && row < 8 && col >= 0 && col < 8) {
+        const piece = this.board[row][col];
+        if (piece && piece.type === type) {
+          return [row, col];
+        }
+      }
+    }
+    
+    // Fallback to old format (id property)
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         if (this.board[row][col]?.id === pieceId) {
