@@ -551,34 +551,132 @@ export class ChessService {
   }
 
   private isValidMove(fromRow: number, fromCol: number, toRow: number, toCol: number, piece: ChessPiece): boolean {
-    // Simple validation - just check if target square is empty or contains enemy piece
+    // Check if target square is empty or contains enemy piece
     const targetPiece = this.board[toRow][toCol];
     if (targetPiece && targetPiece.color === piece.color) {
       return false; // Can't capture own piece
     }
     
-    // For pawns, implement basic rules
-    if (piece.type === 'pawn') {
-      const direction = piece.color === 'white' ? -1 : 1;
-      const startRow = piece.color === 'white' ? 6 : 1;
-      
-      // Forward move
-      if (fromCol === toCol && toRow === fromRow + direction) {
-        return !this.board[toRow][toCol]; // Must be empty
+    // Validate moves based on piece type
+    switch (piece.type) {
+      case 'pawn':
+        return this.isValidPawnMove(fromRow, fromCol, toRow, toCol, piece);
+      case 'knight':
+        return this.isValidKnightMove(fromRow, fromCol, toRow, toCol);
+      case 'bishop':
+        return this.isValidBishopMove(fromRow, fromCol, toRow, toCol);
+      case 'rook':
+        return this.isValidRookMove(fromRow, fromCol, toRow, toCol);
+      case 'queen':
+        return this.isValidQueenMove(fromRow, fromCol, toRow, toCol);
+      case 'king':
+        return this.isValidKingMove(fromRow, fromCol, toRow, toCol);
+      default:
+        return false;
+    }
+  }
+
+  private isValidPawnMove(fromRow: number, fromCol: number, toRow: number, toCol: number, piece: ChessPiece): boolean {
+    const direction = piece.color === 'white' ? -1 : 1;
+    const startRow = piece.color === 'white' ? 6 : 1;
+    
+    // Forward move
+    if (fromCol === toCol && toRow === fromRow + direction) {
+      return !this.board[toRow][toCol]; // Must be empty
+    }
+    
+    // Double move from start
+    if (fromCol === toCol && toRow === fromRow + 2 * direction && fromRow === startRow) {
+      return !this.board[fromRow + direction][fromCol] && !this.board[toRow][toCol];
+    }
+    
+    // Capture
+    if (Math.abs(fromCol - toCol) === 1 && toRow === fromRow + direction) {
+      return !!this.board[toRow][toCol]; // Must capture enemy piece
+    }
+    
+    return false;
+  }
+
+  private isValidKnightMove(fromRow: number, fromCol: number, toRow: number, toCol: number): boolean {
+    const rowDiff = Math.abs(fromRow - toRow);
+    const colDiff = Math.abs(fromCol - toCol);
+    
+    // Knight moves in L-shape: 2 squares in one direction, 1 square perpendicular
+    return (rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2);
+  }
+
+  private isValidBishopMove(fromRow: number, fromCol: number, toRow: number, toCol: number): boolean {
+    const rowDiff = Math.abs(fromRow - toRow);
+    const colDiff = Math.abs(fromCol - toCol);
+    
+    // Bishop moves diagonally
+    if (rowDiff !== colDiff) {
+      return false;
+    }
+    
+    // Check if path is clear
+    const rowStep = fromRow < toRow ? 1 : -1;
+    const colStep = fromCol < toCol ? 1 : -1;
+    
+    let currentRow = fromRow + rowStep;
+    let currentCol = fromCol + colStep;
+    
+    while (currentRow !== toRow && currentCol !== toCol) {
+      if (this.board[currentRow][currentCol]) {
+        return false; // Path is blocked
       }
+      currentRow += rowStep;
+      currentCol += colStep;
+    }
+    
+    return true;
+  }
+
+  private isValidRookMove(fromRow: number, fromCol: number, toRow: number, toCol: number): boolean {
+    // Rook moves horizontally or vertically
+    if (fromRow !== toRow && fromCol !== toCol) {
+      return false;
+    }
+    
+    // Check if path is clear
+    if (fromRow === toRow) {
+      // Horizontal move
+      const startCol = Math.min(fromCol, toCol);
+      const endCol = Math.max(fromCol, toCol);
       
-      // Double move from start
-      if (fromCol === toCol && toRow === fromRow + 2 * direction && fromRow === startRow) {
-        return !this.board[fromRow + direction][fromCol] && !this.board[toRow][toCol];
+      for (let col = startCol + 1; col < endCol; col++) {
+        if (this.board[fromRow][col]) {
+          return false; // Path is blocked
+        }
       }
+    } else {
+      // Vertical move
+      const startRow = Math.min(fromRow, toRow);
+      const endRow = Math.max(fromRow, toRow);
       
-      // Capture
-      if (Math.abs(fromCol - toCol) === 1 && toRow === fromRow + direction) {
-        return !!this.board[toRow][toCol]; // Must capture enemy piece
+      for (let row = startRow + 1; row < endRow; row++) {
+        if (this.board[row][fromCol]) {
+          return false; // Path is blocked
+        }
       }
     }
     
-    return true; // Allow other moves for now
+    return true;
+  }
+
+  private isValidQueenMove(fromRow: number, fromCol: number, toRow: number, toCol: number): boolean {
+    // Queen combines rook and bishop moves
+    return this.isValidRookMove(fromRow, fromCol, toRow, toCol) || 
+           this.isValidBishopMove(fromRow, fromCol, toRow, toCol);
+  }
+
+  private isValidKingMove(fromRow: number, fromCol: number, toRow: number, toCol: number): boolean {
+    const rowDiff = Math.abs(fromRow - toRow);
+    const colDiff = Math.abs(fromCol - toCol);
+    
+    // King moves one square in any direction
+    return rowDiff <= 1 && colDiff <= 1;
   }
 
   private getGameState() {
