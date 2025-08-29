@@ -7,7 +7,9 @@ import { ChessModule } from './chess/chess.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://axjh03:3050@cluster0.qvpwj.mongodb.net/Chess?retryWrites=true&w=majority&appName=Cluster0'),
+    MongooseModule.forRoot(
+      `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}/${process.env.MONGODB_DATABASE}?retryWrites=true&w=majority&appName=${process.env.MONGODB_APP_NAME}`
+    ),
     AuthModule,
     ChessModule,
   ],

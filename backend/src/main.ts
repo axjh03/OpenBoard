@@ -1,3 +1,8 @@
+import * as dotenv from 'dotenv';
+
+// Load environment variables BEFORE any other imports
+dotenv.config();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -10,7 +15,8 @@ async function bootstrap() {
     credentials: true,
   });
   
-  await app.listen(3001);
-  console.log('NestJS backend running on port 3001');
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`NestJS backend running on port ${port}`);
 }
 bootstrap();
