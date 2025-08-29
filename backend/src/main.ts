@@ -13,7 +13,9 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:5173', 
-      'https://your-frontend-domain.com' // Add your frontend domain later
+      'https://*.netlify.app', // Allow all Netlify domains
+      'https://*.netlify.com', // Allow all Netlify domains
+      'https://openboard-l6io.onrender.com' // Allow backend to frontend communication
     ],
     credentials: true,
   });

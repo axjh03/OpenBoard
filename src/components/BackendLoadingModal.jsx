@@ -12,8 +12,16 @@ const BackendLoadingModal = ({ onBackendConnected }) => {
 
     const checkBackend = async () => {
       try {
-        // For production, replace with your render.com URL
-        const response = await fetch('http://localhost:3001/health', {
+        // Automatically detect if running locally or deployed
+        const isLocalhost = window.location.hostname === 'localhost' || 
+                           window.location.hostname === '127.0.0.1' ||
+                           window.location.hostname.includes('localhost');
+        
+        const backendUrl = isLocalhost 
+          ? 'http://localhost:3001'
+          : 'https://openboard-l6io.onrender.com';
+        
+        const response = await fetch(`${backendUrl}/health`, {
           method: 'GET',
           signal: AbortSignal.timeout(5000),
         });
@@ -24,6 +32,7 @@ const BackendLoadingModal = ({ onBackendConnected }) => {
         }
       } catch (error) {
         // Backend not ready yet, continue checking
+        console.log('Backend check failed:', error.message);
       }
     };
 
