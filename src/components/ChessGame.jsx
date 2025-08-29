@@ -3,6 +3,7 @@ import ChessBoard from './ChessBoard';
 import GameLogger from './GameLogger';
 import PromotionModal from './PromotionModal';
 import DifficultyModal from './DifficultyModal';
+import Timer from './Timer';
 import chessService from '../services/chessService';
 import './ChessGame.css';
 
@@ -28,6 +29,8 @@ const ChessGame = ({ onLogout, currentUser }) => {
     selectedDifficulty: null
   });
   const [aiDifficulty, setAiDifficulty] = useState(3);
+  const [timer, setTimer] = useState(120);
+  const [timerActive, setTimerActive] = useState(false);
 
   // Initialize game
   useEffect(() => {
@@ -36,6 +39,23 @@ const ChessGame = ({ onLogout, currentUser }) => {
     }
   }, [difficultyModal.selectedDifficulty]);
 
+  // Timer effect
+  useEffect(() => {
+    let interval = null;
+    if (timerActive && timer > 0) {
+      interval = setInterval(() => {
+        setTimer(prev => {
+          if (prev <= 1) {
+            handleTimeOut();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerActive, timer]);
+
   const initializeGame = async () => {
     try {
       await chessService.initializeGame(true, 'white', aiDifficulty);
@@ -43,16 +63,17 @@ const ChessGame = ({ onLogout, currentUser }) => {
       setBoard(chessService.convertBoardFormat(boardState.board));
       
       // Enhanced logging with difficulty info
-      addLog("🎯 Chess game initialized successfully!", "system");
-      addLog(`🤖 AI Difficulty: ${getDifficultyName(aiDifficulty)} (Depth ${aiDifficulty})`, "system");
-      addLog("📋 Game rules: Standard chess rules apply", "system");
-      addLog("⚪ You are playing as White (bottom)", "system");
-      addLog("⚫ CPU is playing as Black (top)", "system");
-      addLog("🎲 White to move first", "system");
-      addLog("💡 Tip: Click on pieces to see valid moves", "system");
+      addLog("Chess game initialized successfully!", "system");
+      addLog(`AI Difficulty: ${getDifficultyName(aiDifficulty)} (Depth ${aiDifficulty})`, "system");
+      addLog("Game rules: Standard chess rules apply", "system");
+      addLog("You are playing as White (bottom)", "system");
+      addLog("CPU is playing as Black (top)", "system");
+      addLog("White to move first", "system");
+      addLog("Tip: Click on pieces to see valid moves", "system");
       setIsPlayerTurn(true);
+      setTimerActive(true); // Start timer for first move
     } catch (error) {
-      addLog("❌ Failed to initialize game", "system");
+      addLog("Failed to initialize game", "system");
       console.error(error);
     }
   };
@@ -164,7 +185,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
         const newBoard = chessService.convertBoardFormat(boardState.board);
         setBoard(newBoard);
         
-        addLog(`👑 Pawn promoted to ${promotionType}!`, "player");
+        addLog(`Pawn promoted to ${promotionType}!`, "player");
         
         // Continue with AI move after promotion
         setIsPlayerTurn(false);
@@ -173,7 +194,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
         }, 1000);
       }
     } catch (error) {
-      addLog("❌ Promotion failed", "system");
+      addLog("Promotion failed", "system");
       console.error(error);
     } finally {
       setPromotionModal({ isOpen: false, pieceId: null, position: null });
@@ -197,6 +218,48 @@ const ChessGame = ({ onLogout, currentUser }) => {
       isOpen: false,
       selectedDifficulty: { depth: 3, name: "Medium" }
     });
+  };
+
+  const handleTimeOut = () => {
+    setTimerActive(false);
+    setGameOver(true);
+    
+    // Count captured pieces
+    const playerCaptures = capturedPieces.black.length;
+    const cpuCaptures = capturedPieces.white.length;
+    
+    if (playerCaptures > cpuCaptures) {
+      setWinner('white');
+      addLog("Time's up! Player wins by captured pieces!", "system");
+    } else if (cpuCaptures > playerCaptures) {
+      setWinner('black');
+      addLog("Time's up! CPU wins by captured pieces!", "system");
+    } else {
+      setWinner(null);
+      addLog("Time's up! Draw - equal captured pieces!", "system");
+    }
+  };
+
+  const restartGame = () => {
+    // Reset all game state
+    setBoard([]);
+    setSelectedSquare(null);
+    setValidMoves([]);
+    setLogs([]);
+    setIsPlayerTurn(true);
+    setGameOver(false);
+    setWinner(null);
+    setCapturedPieces({ white: [], black: [] });
+    setPromotionModal({ isOpen: false, pieceId: null, position: null });
+    setTimer(120);
+    setTimerActive(false);
+    
+    // Reset difficulty selection to show modal again
+    setDifficultyModal({ 
+      isOpen: true, 
+      selectedDifficulty: null 
+    });
+    setAiDifficulty(3); // Reset to default difficulty
   };
 
   const handleSquareClick = useCallback(async (rowIndex, colIndex) => {
@@ -251,15 +314,16 @@ const ChessGame = ({ onLogout, currentUser }) => {
             const needsPromotion = checkForPromotion(newBoard);
             if (!needsPromotion) {
               setIsPlayerTurn(false);
+              setTimerActive(false); // Stop timer during AI turn
               
               // Enhanced move logging
               const fromSquare = chessService.convertToChessNotation(selectedSquare.row, selectedSquare.col);
               const pieceType = board[selectedSquare.row][selectedSquare.col].type;
-              addLog(`♟️ ${pieceType} moved from ${fromSquare} to ${targetSquare}`, "player");
+              addLog(`${pieceType} moved from ${fromSquare} to ${targetSquare}`, "player");
               
               // Check for special moves
               if (pieceType === 'pawn' && Math.abs(selectedSquare.row - rowIndex) === 2) {
-                addLog("🚀 Pawn made a double move!", "system");
+                addLog("Pawn made a double move!", "system");
               }
               
               // AI move after a short delay
@@ -267,7 +331,7 @@ const ChessGame = ({ onLogout, currentUser }) => {
                 makeAIMove();
               }, 1000);
             } else {
-              addLog(`👑 Pawn reached promotion rank! Choose your promotion piece.`, "player");
+              addLog(`Pawn reached promotion rank! Choose your promotion piece.`, "player");
             }
           }
         } catch (error) {
@@ -295,17 +359,27 @@ const ChessGame = ({ onLogout, currentUser }) => {
   }, [selectedSquare, validMoves, isPlayerTurn, gameOver, board]);
 
   const makeAIMove = async () => {
-    addLog("🤖 AI is analyzing the position...", "cpu");
+    addLog("AI is analyzing the position...", "cpu");
     
     try {
       const startTime = Date.now();
-      const aiResult = await chessService.getAIMove();
+      
+      // Add timeout to prevent AI from getting stuck
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('AI move timeout')), 10000); // 10 second timeout
+      });
+      
+      const aiResult = await Promise.race([
+        chessService.getAIMove(),
+        timeoutPromise
+      ]);
+      
       const thinkTime = ((Date.now() - startTime) / 1000).toFixed(1);
       
       if (aiResult.success) {
         const fromSquare = aiResult.move.from;
         const toSquare = aiResult.move.to;
-        addLog(`🤖 AI moved: ${fromSquare} to ${toSquare} (thought for ${thinkTime}s)`, "cpu");
+        addLog(`AI moved: ${fromSquare} to ${toSquare} (thought for ${thinkTime}s)`, "cpu");
         
         const oldBoard = [...board];
         const boardState = await chessService.getBoardState();
@@ -319,12 +393,20 @@ const ChessGame = ({ onLogout, currentUser }) => {
           addLog(moveAnalysis, "cpu");
         }
         
-        addLog(`🔄 Turn switched to Player`, "system");
+        addLog(`Turn switched to Player`, "system");
         setIsPlayerTurn(true);
+        setTimer(120); // Reset timer
+        setTimerActive(true); // Start timer for player
       }
     } catch (error) {
-      addLog("❌ AI move failed", "system");
-      console.error(error);
+      if (error.message === 'AI move timeout') {
+        addLog("AI move timed out - making random move", "system");
+        // Make a simple random move as fallback
+        await makeRandomAIMove();
+      } else {
+        addLog("AI move failed", "system");
+        console.error(error);
+      }
     }
   };
 
@@ -364,8 +446,54 @@ const ChessGame = ({ onLogout, currentUser }) => {
     return null;
   };
 
+  const makeRandomAIMove = async () => {
+    try {
+      // Simple fallback: find any black piece and move it randomly
+      const blackPieces = [];
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const piece = board[row][col];
+          if (piece && piece.color === 'black') {
+            blackPieces.push({ piece, row, col });
+          }
+        }
+      }
+      
+      if (blackPieces.length > 0) {
+        const randomPiece = blackPieces[Math.floor(Math.random() * blackPieces.length)];
+        const targetRow = Math.floor(Math.random() * 8);
+        const targetCol = Math.floor(Math.random() * 8);
+        
+        // Simple move - just move to a random square
+        const oldBoard = [...board];
+        const newBoard = [...board];
+        newBoard[targetRow][targetCol] = randomPiece.piece;
+        newBoard[randomPiece.row][randomPiece.col] = null;
+        
+        setBoard(newBoard);
+        updateCapturedPieces(oldBoard, newBoard);
+        addLog("AI made a random move", "cpu");
+        addLog("Turn switched to Player", "system");
+        setIsPlayerTurn(true);
+        setTimer(120);
+        setTimerActive(true);
+      }
+    } catch (error) {
+      addLog("Random AI move also failed", "system");
+      console.error(error);
+    }
+  };
+
   return (
     <div className="chess-game-layout">
+      {/* Timer */}
+      <Timer time={timer} isActive={timerActive && isPlayerTurn} />
+      
+      {/* Restart Button */}
+      <button className="restart-button" onClick={restartGame}>
+        Restart Game
+      </button>
+
       {/* Chess Board Section */}
       <div className="chess-board-section">
         <ChessBoard 

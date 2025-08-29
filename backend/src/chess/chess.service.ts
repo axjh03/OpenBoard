@@ -236,39 +236,206 @@ export class ChessService {
   }
 
   async getAIMove() {
-    // Simple AI - find a pawn and move it forward
+    // Get all valid moves for black pieces
+    const allMoves: Array<{
+      piece: ChessPiece;
+      fromRow: number;
+      fromCol: number;
+      toRow: number;
+      toCol: number;
+      isCapture: boolean;
+    }> = [];
+    
     for (let row = 0; row < 8; row++) {
       for (let col = 0; col < 8; col++) {
         const piece = this.board[row][col];
-        if (piece && piece.color === 'black' && piece.type === 'pawn') {
-          const direction = 1; // Black pawns move down
-          const newRow = row + direction;
-          
-          if (newRow < 8 && !this.board[newRow][col]) {
-            const fromSquare = this.toSquareNotation(row, col);
-            const toSquare = this.toSquareNotation(newRow, col);
-            
-            // Execute the move
-            this.board[newRow][col] = piece;
-            this.board[row][col] = null;
-            
-            // Note: Pawn promotion will be handled by the frontend
-            // The pawn stays as a pawn until the player chooses promotion
-            
-            this.currentTurn = 'white';
-            
-            return {
-              success: true,
-              message: 'AI move executed',
-              move: { from: fromSquare, to: toSquare },
-              gameState: this.getGameState()
-            };
+        if (piece && piece.color === 'black') {
+          const moves = this.getValidMovesForPiece(piece, row, col);
+          for (const move of moves) {
+            allMoves.push({
+              piece,
+              fromRow: row,
+              fromCol: col,
+              toRow: move.row,
+              toCol: move.col,
+              isCapture: this.board[move.row][move.col] !== null
+            });
           }
         }
       }
     }
     
-    return { success: false, message: 'No valid AI move found' };
+    if (allMoves.length === 0) {
+      return { success: false, message: 'No valid AI move found' };
+    }
+    
+    // Prioritize captures
+    const captures = allMoves.filter(move => move.isCapture);
+    const movesToConsider = captures.length > 0 ? captures : allMoves;
+    
+    // Choose a random move from the available options
+    const selectedMove = movesToConsider[Math.floor(Math.random() * movesToConsider.length)];
+    
+    const fromSquare = this.toSquareNotation(selectedMove.fromRow, selectedMove.fromCol);
+    const toSquare = this.toSquareNotation(selectedMove.toRow, selectedMove.toCol);
+    
+    // Execute the move
+    this.board[selectedMove.toRow][selectedMove.toCol] = selectedMove.piece;
+    this.board[selectedMove.fromRow][selectedMove.fromCol] = null;
+    
+    this.currentTurn = 'white';
+    
+    return {
+      success: true,
+      message: 'AI move executed',
+      move: { from: fromSquare, to: toSquare },
+      gameState: this.getGameState()
+    };
+  }
+
+  private getValidMovesForPiece(piece: ChessPiece, row: number, col: number) {
+    const moves: { row: number; col: number }[] = [];
+    
+    if (piece.type === 'pawn') {
+      const direction = 1; // Black pawns move down
+      const newRow = row + direction;
+      
+      if (newRow < 8) {
+        // Forward move
+        if (!this.board[newRow][col]) {
+          moves.push({ row: newRow, col });
+          
+          // Double move from starting position
+          if (row === 1 && !this.board[newRow + direction][col]) {
+            moves.push({ row: newRow + direction, col });
+          }
+        }
+        
+        // Captures
+        for (const dCol of [-1, 1]) {
+          const newCol = col + dCol;
+          if (newCol >= 0 && newCol < 8) {
+            const targetPiece = this.board[newRow][newCol];
+            if (targetPiece && targetPiece.color === 'white') {
+              moves.push({ row: newRow, col: newCol });
+            }
+          }
+        }
+      }
+    } else if (piece.type === 'knight') {
+      const knightMoves = [
+        { row: -2, col: -1 }, { row: -2, col: 1 },
+        { row: -1, col: -2 }, { row: -1, col: 2 },
+        { row: 1, col: -2 }, { row: 1, col: 2 },
+        { row: 2, col: -1 }, { row: 2, col: 1 }
+      ];
+      
+      for (const move of knightMoves) {
+        const newRow = row + move.row;
+        const newCol = col + move.col;
+        
+        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece || targetPiece.color === 'white') {
+            moves.push({ row: newRow, col: newCol });
+          }
+        }
+      }
+    } else if (piece.type === 'bishop') {
+      const directions = [
+        { row: -1, col: -1 }, { row: -1, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color === 'white') {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'rook') {
+      const directions = [
+        { row: -1, col: 0 }, { row: 1, col: 0 },
+        { row: 0, col: -1 }, { row: 0, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color === 'white') {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'queen') {
+      const directions = [
+        { row: -1, col: 0 }, { row: 1, col: 0 },
+        { row: 0, col: -1 }, { row: 0, col: 1 },
+        { row: -1, col: -1 }, { row: -1, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        let newRow = row + dir.row;
+        let newCol = col + dir.col;
+        
+        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece) {
+            moves.push({ row: newRow, col: newCol });
+          } else {
+            if (targetPiece.color === 'white') {
+              moves.push({ row: newRow, col: newCol });
+            }
+            break;
+          }
+          newRow += dir.row;
+          newCol += dir.col;
+        }
+      }
+    } else if (piece.type === 'king') {
+      const directions = [
+        { row: -1, col: -1 }, { row: -1, col: 0 }, { row: -1, col: 1 },
+        { row: 0, col: -1 }, { row: 0, col: 1 },
+        { row: 1, col: -1 }, { row: 1, col: 0 }, { row: 1, col: 1 }
+      ];
+      
+      for (const dir of directions) {
+        const newRow = row + dir.row;
+        const newCol = col + dir.col;
+        
+        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+          const targetPiece = this.board[newRow][newCol];
+          if (!targetPiece || targetPiece.color === 'white') {
+            moves.push({ row: newRow, col: newCol });
+          }
+        }
+      }
+    }
+    
+    return moves;
   }
 
   async promotePawn(pieceId: string, promotionType: string) {
