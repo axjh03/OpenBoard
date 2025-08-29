@@ -2,7 +2,16 @@
 
 class ChessService {
   constructor() {
-    this.backendUrl = 'http://localhost:3001';
+    // Automatically detect if running locally or deployed
+    const isLocalhost = window.location.hostname === 'localhost' || 
+                       window.location.hostname === '127.0.0.1' ||
+                       window.location.hostname.includes('localhost');
+    
+    this.backendUrl = isLocalhost 
+      ? 'http://localhost:3001'
+      : 'https://openboard-l6io.onrender.com';
+    
+    console.log(`Chess service initialized with backend URL: ${this.backendUrl}`);
     this.game = null;
   }
 
